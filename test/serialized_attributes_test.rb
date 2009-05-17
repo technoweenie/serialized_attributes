@@ -188,6 +188,10 @@ class SerializedAttributeTest < ActiveSupport::TestCase
       assert_equal 'abc', @record.send("#{attr}=", "abc")
       assert_equal 'abc', @record.data[attr.to_s]
     end
+
+    test "does not define ##{attr}? method for string fields" do
+      assert !@record.respond_to?("#{attr}?")
+    end
   end
 
   attributes[:integer].each do |attr|
@@ -196,6 +200,10 @@ class SerializedAttributeTest < ActiveSupport::TestCase
       assert_equal 0, @record.send("#{attr}=", "abc")
       assert_equal 1, @record.send("#{attr}=", "1.2")
       assert_equal 1, @record.data[attr.to_s]
+    end
+
+    test "does not define ##{attr}? method for integer fields" do
+      assert !@record.respond_to?("#{attr}?")
     end
   end
 
@@ -206,6 +214,10 @@ class SerializedAttributeTest < ActiveSupport::TestCase
       assert_equal 1.2, @record.send("#{attr}=", "1.2")
       assert_equal 1.2, @record.data[attr.to_s]
     end
+
+    test "does not define ##{attr}? method for float fields" do
+      assert !@record.respond_to?("#{attr}?")
+    end
   end
 
   attributes[:time].each do |attr|
@@ -214,6 +226,23 @@ class SerializedAttributeTest < ActiveSupport::TestCase
       t = Time.now.utc.midnight
       assert_equal t, @record.send("#{attr}=", t.xmlschema)
       assert_equal t, @record.data[attr.to_s]
+    end
+
+    test "does not define ##{attr}? method for boolean fields" do
+      assert !@record.respond_to?("#{attr}?")
+    end
+  end
+
+  attributes[:boolean].each do |attr|
+    test "defines ##{attr}= method for boolean fields" do
+      assert @record.respond_to?("#{attr}=")
+      assert_equal false, @record.send("#{attr}=", 0)
+      assert_equal true,  @record.send("#{attr}=", "1.2")
+      assert_equal true,  @record.data[attr.to_s]
+    end
+
+    test "defines ##{attr}? method for float fields" do
+      assert @record.respond_to?("#{attr}?")
     end
   end
 end

@@ -175,6 +175,10 @@ module SerializedAttributes
           send(data_field)[name_str]
         end
 
+        if type == Boolean
+          @model.send :alias_method, "#{name}?", name
+        end
+
         @model.send(:define_method, "#{name}=") do |value|
           write_serialized_field name_str, value
         end
