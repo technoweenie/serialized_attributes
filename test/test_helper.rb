@@ -18,7 +18,7 @@ end
 
 class SerializedRecord < ActiveRecord::Base
   # the field in the database that stores the binary data
-  attr_accessor :data
+  attr_accessor :raw_data
 
   def self.table_exists?() false end
   def self.columns()       []    end

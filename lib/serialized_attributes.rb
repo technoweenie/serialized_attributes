@@ -6,9 +6,27 @@ require 'stringio'
 # and convenient attr methods
 #
 #   class Profile < ActiveRecord::Base
+#     # not needed if used as a rails plugin
 #     SerializedAttributes.setup(self)
 #
+#     # assumes #data serializes to raw_data blob field
+#     serialize_attributes do
+#       string  :title, :description
+#       integer :age
+#       float   :rank, :percentage
+#       time    :birthday
+#     end
+#
+#     # Serializes #data to assumed raw_data blob field
 #     serialize_attributes :data do
+#       string  :title, :description
+#       integer :age
+#       float   :rank, :percentage
+#       time    :birthday
+#     end
+#
+#     # set the blob field
+#     serialize_attributes :data, :blob => :serialized_field do
 #       string  :title, :description
 #       integer :age
 #       float   :rank, :percentage
@@ -89,36 +107,38 @@ module SerializedAttributes
       @fields.include?(key.to_s)
     end
 
-    def initialize(model, field)
+    def initialize(model, field, options)
       @model, @field, @fields = model, field, {}
-      blob_field = @field
-      raw_field  = @raw      = "raw_#{@field}"
+      @blob_field = options.delete(:blob) || "raw_#{@field}"
+      blob_field = @blob_field
+      data_field = @field
+
       meta_model = class << @model; self; end
-      raw_changed_ivar = "#{@raw}_changed"
-      meta_model.send(:attr_accessor, "#{@field}_schema")
-      @model.send("#{@field}_schema=", self)
-      @model.send(:define_method, @raw) do
-        instance_variable_get("@#{raw_field}") || begin
+      changed_ivar = "#{data_field}_changed"
+      meta_model.send(:attr_accessor, "#{data_field}_schema")
+      @model.send("#{data_field}_schema=", self)
+      @model.send(:define_method, data_field) do
+        instance_variable_get("@#{data_field}") || begin
           decoded = SerializedAttributes::Schema.decode(send(blob_field))
-          schema  = self.class.send("#{blob_field}_schema")
+          schema  = self.class.send("#{data_field}_schema")
           hash    = {}
-          instance_variable_set("@#{raw_field}", hash)
+          instance_variable_set("@#{data_field}", hash)
           decoded.each do |k, v|
             next unless schema.include?(k)
             send("#{k}=", v)
           end
-          instance_variable_get("@#{raw_changed_ivar}").clear if send("#{raw_changed_ivar}?")
+          instance_variable_get("@#{changed_ivar}").clear if send("#{changed_ivar}?")
           hash
         end
       end
 
       @model.send(:define_method, :write_serialized_field) do |name, value|
-        raw_data = send(raw_field) # load fields if needed
+        raw_data = send(data_field) # load fields if needed
         name_str = name.to_s
-        schema   = self.class.send("#{blob_field}_schema")
+        schema   = self.class.send("#{data_field}_schema")
         type     = schema.fields[name_str]
-        changed_fields = send(raw_changed_ivar)
-        instance_variable_get("@#{raw_changed_ivar}")[name_str] = raw_data[name_str] unless changed_fields.include?(name_str)
+        changed_fields = send(changed_ivar)
+        instance_variable_get("@#{changed_ivar}")[name_str] = raw_data[name_str] unless changed_fields.include?(name_str)
         parsed_value = type ? type.parse(value) : value
         if parsed_value.nil?
           raw_data.delete(name_str)
@@ -128,30 +148,31 @@ module SerializedAttributes
         parsed_value
       end
 
-      @model.send(:define_method, raw_changed_ivar) do
-        hash = instance_variable_get("@#{raw_changed_ivar}") || instance_variable_set("@#{raw_changed_ivar}", {})
+      @model.send(:define_method, changed_ivar) do
+        hash = instance_variable_get("@#{changed_ivar}") || instance_variable_set("@#{changed_ivar}", {})
         hash.keys
       end
 
-      @model.send(:define_method, "#{raw_changed_ivar}?") do
-        !send(raw_changed_ivar).empty?
+      @model.send(:define_method, "#{changed_ivar}?") do
+        !send(changed_ivar).empty?
       end
 
       @model.before_save do |r|
-        schema = r.class.send("#{blob_field}_schema")
-        r.send("#{blob_field}=", schema.encode(r.send(raw_field)))
+        schema = r.class.send("#{data_field}_schema")
+        r.send("#{blob_field}=", schema.encode(r.send(data_field)))
       end
     end
 
     def field(type_name, *names)
+      data_field   = @field
+      changed_ivar = "#{data_field}_changed"
       names.each do |name|
-        raw_data_name     = @raw
-        raw_changed_ivar  = "#{@raw}_changed"
         name_str          = name.to_s
         type              = SerializedAttributes.types[type_name]
         @fields[name_str] = type
+
         @model.send(:define_method, name) do
-          send(raw_data_name)[name_str]
+          send(data_field)[name_str]
         end
 
         @model.send(:define_method, "#{name}=") do |value|
@@ -159,7 +180,7 @@ module SerializedAttributes
         end
 
         @model.send(:define_method, "#{name}_changed?") do
-          send(raw_changed_ivar).include?(name_str)
+          send(changed_ivar).include?(name_str)
         end
 
         @model.send(:define_method, "#{name}_before_type_cast") do
@@ -170,7 +191,7 @@ module SerializedAttributes
 
         @model.send(:define_method, "#{name}_change") do
           if send("#{name}_changed?")
-            [instance_variable_get("@#{raw_changed_ivar}")[name_str], send(raw_data_name)[name_str]]
+            [instance_variable_get("@#{changed_ivar}")[name_str], send(data_field)[name_str]]
           else
             nil
           end
@@ -204,8 +225,8 @@ module SerializedAttributes
   end
 
   module ModelMethods
-    def serialize_attributes(field = :data, &block)
-      schema = Schema.new(self, field)
+    def serialize_attributes(field = :data, options = {}, &block)
+      schema = Schema.new(self, field, options)
       schema.instance_eval(&block)
       schema.fields.freeze
       schema

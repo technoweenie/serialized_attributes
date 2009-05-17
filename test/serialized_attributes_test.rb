@@ -8,17 +8,17 @@ class SerializedAttributeWithSerializedDataTest < ActiveSupport::TestCase
   def setup
     @record  = SerializedRecord.new
     @changed = SerializedRecord.new
-    @record.data   = @@encoded_hash
-    @changed.data  = @@encoded_hash
-    @changed.title = 'def'
-    @changed.age   = 6
+    @record.raw_data  = @@encoded_hash
+    @changed.raw_data = @@encoded_hash
+    @changed.title    = 'def'
+    @changed.age      = 6
   end
 
   test "ignores data with extra keys" do
-    @record.data = SerializedAttributes::Schema.encode(@@raw_hash.merge(:foo => :bar))
+    @record.raw_data = SerializedAttributes::Schema.encode(@@raw_hash.merge(:foo => :bar))
     assert_not_nil @record.title     # no undefined foo= error
     assert_equal false, @record.save # extra before_save cancels the operation
-    assert_equal @@raw_hash.merge(:active => 1).stringify_keys, SerializedAttributes::Schema.decode(@record.data)
+    assert_equal @@raw_hash.merge(:active => 1).stringify_keys, SerializedAttributes::Schema.decode(@record.raw_data)
   end
 
   test "reads strings" do
@@ -26,9 +26,9 @@ class SerializedAttributeWithSerializedDataTest < ActiveSupport::TestCase
   end
   
   test "clears strings with nil" do
-    assert @record.raw_data.key?('title')
+    assert @record.data.key?('title')
     @record.title = nil
-    assert !@record.raw_data.key?('title')
+    assert !@record.data.key?('title')
   end
   
   test "reads integers" do
@@ -41,15 +41,15 @@ class SerializedAttributeWithSerializedDataTest < ActiveSupport::TestCase
   end
   
   test "clears integers with nil" do
-    assert @record.raw_data.key?('age')
+    assert @record.data.key?('age')
     @record.age = nil
-    assert !@record.raw_data.key?('age')
+    assert !@record.data.key?('age')
   end
   
   test "clears integers with blank" do
-    assert @record.raw_data.key?('age')
+    assert @record.data.key?('age')
     @record.age = ''
-    assert !@record.raw_data.key?('age')
+    assert !@record.data.key?('age')
   end
   
   test "reads floats" do
@@ -62,15 +62,15 @@ class SerializedAttributeWithSerializedDataTest < ActiveSupport::TestCase
   end
   
   test "clears floats with nil" do
-    assert @record.raw_data.key?('average')
+    assert @record.data.key?('average')
     @record.average = nil
-    assert !@record.raw_data.key?('average')
+    assert !@record.data.key?('average')
   end
   
   test "clears floats with blank" do
-    assert @record.raw_data.key?('average')
+    assert @record.data.key?('average')
     @record.average = ''
-    assert !@record.raw_data.key?('average')
+    assert !@record.data.key?('average')
   end
   
   test "reads times" do
@@ -84,15 +84,15 @@ class SerializedAttributeWithSerializedDataTest < ActiveSupport::TestCase
   end
   
   test "clears times with nil" do
-    assert @record.raw_data.key?('birthday')
+    assert @record.data.key?('birthday')
     @record.birthday = nil
-    assert !@record.raw_data.key?('birthday')
+    assert !@record.data.key?('birthday')
   end
   
   test "clears times with blank" do
-    assert @record.raw_data.key?('birthday')
+    assert @record.data.key?('birthday')
     @record.birthday = ''
-    assert !@record.raw_data.key?('birthday')
+    assert !@record.data.key?('birthday')
   end
   
   test "reads booleans" do
@@ -114,26 +114,26 @@ class SerializedAttributeWithSerializedDataTest < ActiveSupport::TestCase
   end
   
   test "converts booleans to false with nil" do
-    assert @record.raw_data.key?('active')
+    assert @record.data.key?('active')
     @record.active = nil
-    assert !@record.raw_data.key?('active')
+    assert !@record.data.key?('active')
   end
   
    test "attempts to re-encode data when saving" do
      assert_not_nil @record.title
-     @record.data = nil
+     @record.raw_data = nil
      assert_equal false, @record.save # extra before_save cancels the operation
-     assert_equal @@raw_hash.merge(:active => 1).stringify_keys, SerializedAttributes::Schema.decode(@record.data)
+     assert_equal @@raw_hash.merge(:active => 1).stringify_keys, SerializedAttributes::Schema.decode(@record.raw_data)
    end
   
   test "knows untouched record is not changed" do
-    assert !@record.raw_data_changed?
-    assert_equal [], @record.raw_data_changed
+    assert !@record.data_changed?
+    assert_equal [], @record.data_changed
   end
   
   test "knows updated record is changed" do
-    assert @changed.raw_data_changed?
-    assert_equal %w(age title), @changed.raw_data_changed.sort
+    assert @changed.data_changed?
+    assert_equal %w(age title), @changed.data_changed.sort
   end
   
   test "tracks if field has changed" do
@@ -158,9 +158,9 @@ class SerializedAttributeTest < ActiveSupport::TestCase
     assert_equal SerializedAttributes::Schema.decode(encoded), hash.stringify_keys
   end
 
-  test "defines #raw_data method on the model" do
-    assert @record.respond_to?(:raw_data)
-    assert_equal @record.raw_data, {}
+  test "defines #data method on the model" do
+    assert @record.respond_to?(:data)
+    assert_equal @record.data, {}
   end
 
   attributes = {:string => [:title, :body], :integer => [:age], :float => [:average], :time => [:birthday], :boolean => [:active]}
@@ -186,7 +186,7 @@ class SerializedAttributeTest < ActiveSupport::TestCase
     test "defines ##{attr}= method for string fields" do
       assert @record.respond_to?("#{attr}=")
       assert_equal 'abc', @record.send("#{attr}=", "abc")
-      assert_equal 'abc', @record.raw_data[attr.to_s]
+      assert_equal 'abc', @record.data[attr.to_s]
     end
   end
 
@@ -195,7 +195,7 @@ class SerializedAttributeTest < ActiveSupport::TestCase
       assert @record.respond_to?("#{attr}=")
       assert_equal 0, @record.send("#{attr}=", "abc")
       assert_equal 1, @record.send("#{attr}=", "1.2")
-      assert_equal 1, @record.raw_data[attr.to_s]
+      assert_equal 1, @record.data[attr.to_s]
     end
   end
 
@@ -204,7 +204,7 @@ class SerializedAttributeTest < ActiveSupport::TestCase
       assert @record.respond_to?("#{attr}=")
       assert_equal 0.0, @record.send("#{attr}=", "abc")
       assert_equal 1.2, @record.send("#{attr}=", "1.2")
-      assert_equal 1.2, @record.raw_data[attr.to_s]
+      assert_equal 1.2, @record.data[attr.to_s]
     end
   end
 
@@ -213,7 +213,7 @@ class SerializedAttributeTest < ActiveSupport::TestCase
       assert @record.respond_to?("#{attr}=")
       t = Time.now.utc.midnight
       assert_equal t, @record.send("#{attr}=", t.xmlschema)
-      assert_equal t, @record.raw_data[attr.to_s]
+      assert_equal t, @record.data[attr.to_s]
     end
   end
 end
