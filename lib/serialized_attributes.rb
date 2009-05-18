@@ -62,15 +62,14 @@ module SerializedAttributes
     def self.encode(input) input ? input.utc.xmlschema : nil end
   end
 
-  @@types = {
-    :string  => nil,
-    :integer => Integer,
-    :float   => Float,
-    :time    => Time,
-    :boolean => Boolean
-  }
-
-  def self.types() @@types end
+  @@types = {}
+  mattr_reader :types
+  def self.add_type(type, object = nil)
+    @@types[type] = object
+    Schema.send(:define_method, type) do |*names|
+      field type, *names
+    end
+  end
 
   class Schema
     attr_reader :model, :field, :fields
@@ -202,31 +201,13 @@ module SerializedAttributes
         end
       end
     end
-
-    def string(*names)
-      field :string, *names
-    end
-
-    def integer(*names)
-      field :integer, *names
-    end
-
-    def float(*names)
-      field :float, *names
-    end
-
-    def time(*names)
-      field :time, *names
-    end
-
-    def boolean(*names)
-      field :boolean, *names
-    end
   end
 
-  def self.setup(base)
-    base.extend ModelMethods
-  end
+  add_type :string
+  add_type :integer, Integer
+  add_type :float,   Float
+  add_type :time,    Time
+  add_type :boolean, Boolean
 
   module ModelMethods
     def serialize_attributes(field = :data, options = {}, &block)
