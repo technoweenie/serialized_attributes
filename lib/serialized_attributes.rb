@@ -35,6 +35,11 @@ require 'stringio'
 #   end
 #
 module SerializedAttributes
+  module String
+    def self.parse(input)  input.nil? ? nil : input.to_s end
+    def self.encode(input) input end
+  end
+
   module Integer
     def self.parse(input)  input.blank? ? nil : input.to_i end
     def self.encode(input) input          end
@@ -203,7 +208,7 @@ module SerializedAttributes
     end
   end
 
-  add_type :string
+  add_type :string,  String
   add_type :integer, Integer
   add_type :float,   Float
   add_type :time,    Time
