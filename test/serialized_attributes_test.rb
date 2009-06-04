@@ -14,6 +14,18 @@ class SerializedAttributeWithSerializedDataTest < ActiveSupport::TestCase
     @changed.age      = 6
   end
 
+  test "initialized model is not changed" do
+    @record.data
+    assert !@record.changed?
+  end
+
+  test "initialization does not call writers" do
+    def @record.title=(v)
+      raise ArgumentError
+    end
+    assert_not_nil @record.data
+  end
+
   test "ignores data with extra keys" do
     @record.raw_data = SerializedAttributes::Schema.encode(@@raw_hash.merge(:foo => :bar))
     assert_not_nil @record.title     # no undefined foo= error
