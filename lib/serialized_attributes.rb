@@ -35,25 +35,30 @@ require 'stringio'
 #   end
 #
 module SerializedAttributes
-  module Integer
-    def self.parse(input)  input.blank? ? nil : input.to_i end
-    def self.encode(input) input          end
+  class AttributeType
+    attr_reader :default
+    def initialize(default = nil)
+      @default = default
+    end
+    def encode(s) s end
   end
 
-  module Float
-    def self.parse(input)  input.blank? ? nil : input.to_f end
-    def self.encode(input) input          end
+  class Integer < AttributeType
+    def parse(input)  input.blank? ? nil : input.to_i end
   end
 
-  module Boolean
-    def self.parse(input)  input && input.respond_to?(:to_i) ? (input.to_i > 0) : input end
-    def self.encode(input) input ? 1 : 0  end
+  class Float < AttributeType
+    def parse(input)  input.blank? ? nil : input.to_f end
   end
 
-  module String
-    def self.encode(s) s end
+  class Boolean < AttributeType
+    def parse(input)  input && input.respond_to?(:to_i) ? (input.to_i > 0) : input end
+    def encode(input) input ? 1 : 0  end
+  end
+
+  class String < AttributeType
     # converts unicode (\u003c) to the actual character
-    def self.parse(str)
+    def parse(str)
       return nil if str.nil?
       str = str.to_s
       str.gsub!(/\\u([0-9a-z]{4})/i) { |s| [$1.to_i(16)].pack("U") }
@@ -61,8 +66,8 @@ module SerializedAttributes
     end
   end
 
-  module Time
-    def self.parse(input)
+  class Time < AttributeType
+    def parse(input)
       return nil if input.blank?
       case input
         when Time   then input
@@ -70,7 +75,7 @@ module SerializedAttributes
         else input.to_time
       end
     end
-    def self.encode(input) input ? input.utc.xmlschema : nil end
+    def encode(input) input ? input.utc.xmlschema : nil end
   end
 
   @@types = {}
@@ -184,14 +189,14 @@ module SerializedAttributes
       changed_ivar = "#{data_field}_changed"
       names.each do |name|
         name_str          = name.to_s
-        type              = SerializedAttributes.types[type_name]
+        type              = SerializedAttributes.types[type_name].new
         @fields[name_str] = type
 
         @model.send(:define_method, name) do
           send(data_field)[name_str]
         end
 
-        if type == Boolean
+        if type.is_a? Boolean
           @model.send :alias_method, "#{name}?", name
         end
 
