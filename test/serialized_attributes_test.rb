@@ -6,12 +6,34 @@ class SerializedAttributeWithSerializedDataTest < ActiveSupport::TestCase
   @@encoded_hash = SerializedAttributes::Schema.encode(@@raw_hash)
 
   def setup
+    @newbie  = SerializedRecordWithDefaults.new
     @record  = SerializedRecord.new
     @changed = SerializedRecord.new
     @record.raw_data  = @@encoded_hash
     @changed.raw_data = @@encoded_hash
     @changed.title    = 'def'
     @changed.age      = 6
+  end
+
+  test "new model respects integer defaults" do
+    assert_equal 18, @newbie.age
+  end
+
+  test "new model respects string defaults" do
+    assert_equal 'blank', @newbie.title
+    assert_equal 'blank', @newbie.body
+  end
+
+  test "new model respects float defaults" do
+    assert_equal 5.2, @newbie.average
+  end
+
+  test "new model respects boolean defaults" do
+    assert  @newbie.active?
+  end
+
+  test "new model respects date defaults" do
+    assert_equal Time.utc(2009, 1, 1), @newbie.birthday
   end
 
   test "initialized model is not changed" do

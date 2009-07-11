@@ -149,6 +149,11 @@ module SerializedAttributes
             type = schema.fields[k]
             hash[k] = type ? type.parse(v) : v
           end
+          if decoded.blank? && new_record?
+            schema.fields.each do |key, type|
+              hash[key] = type.default if type.default
+            end
+          end
           hash
         end
       end
@@ -185,11 +190,12 @@ module SerializedAttributes
     end
 
     def field(type_name, *names)
+      options      = names.extract_options!
       data_field   = @field
       changed_ivar = "#{data_field}_changed"
       names.each do |name|
         name_str          = name.to_s
-        type              = SerializedAttributes.types[type_name].new
+        type              = SerializedAttributes.types[type_name].new(options[:default])
         @fields[name_str] = type
 
         @model.send(:define_method, name) do

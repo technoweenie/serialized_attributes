@@ -16,12 +16,20 @@ begin
 rescue LoadError
 end
 
-class SerializedRecord < ActiveRecord::Base
-  # the field in the database that stores the binary data
-  attr_accessor :raw_data
+module SerializableMethods
+  def table_exists?() false end
+  def columns()       []    end
 
-  def self.table_exists?() false end
-  def self.columns()       []    end
+  def transaction
+    yield
+  rescue ActiveRecord::Rollback
+  end
+end
+
+class SerializedRecord < ActiveRecord::Base
+  extend SerializableMethods
+
+  attr_accessor :raw_data
 
   serialize_attributes :data do
     string  :title, :body
@@ -32,9 +40,20 @@ class SerializedRecord < ActiveRecord::Base
   end
 
   before_save { |r| false } # cancel the save
+end
 
-  def self.transaction
-    yield
-  rescue ActiveRecord::Rollback
+class SerializedRecordWithDefaults < ActiveRecord::Base
+  extend SerializableMethods
+
+  attr_accessor :raw_data
+
+  serialize_attributes :data do
+    string  :title, :body, :default => 'blank'
+    integer :age,          :default => 18
+    float   :average,      :default => 5.2
+    time    :birthday,     :default => Time.utc(2009, 1, 1)
+    boolean :active,       :default => true
   end
+
+  before_save { |r| false } # cancel the save
 end
