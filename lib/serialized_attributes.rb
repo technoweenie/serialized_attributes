@@ -35,11 +35,6 @@ require 'stringio'
 #   end
 #
 module SerializedAttributes
-  module String
-    def self.parse(input)  input.nil? ? nil : input.to_s end
-    def self.encode(input) input end
-  end
-
   module Integer
     def self.parse(input)  input.blank? ? nil : input.to_i end
     def self.encode(input) input          end
@@ -53,6 +48,17 @@ module SerializedAttributes
   module Boolean
     def self.parse(input)  input && input.respond_to?(:to_i) ? (input.to_i > 0) : input end
     def self.encode(input) input ? 1 : 0  end
+  end
+
+  module String
+    def self.encode(s) s end
+    # converts unicode (\u003c) to the actual character
+    def self.parse(str)
+      return nil if str.nil?
+      str = str.to_s
+      str.gsub!(/\\u([0-9a-z]{4})/i) { |s| [$1.to_i(16)].pack("U") }
+      str
+    end
   end
 
   module Time
