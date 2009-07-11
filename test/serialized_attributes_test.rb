@@ -16,7 +16,13 @@ class SerializedAttributeWithSerializedDataTest < ActiveSupport::TestCase
 
   test "initialized model is not changed" do
     @record.data
-    assert !@record.changed?
+    assert !@record.data_changed?
+  end
+
+  test "#attribute_names contains serialized fields" do
+    assert_equal %w(active age average birthday title), @record.attribute_names
+    @record.body = 'a'
+    assert_equal %w(active age average birthday body title), @record.attribute_names
   end
 
   test "initialization does not call writers" do

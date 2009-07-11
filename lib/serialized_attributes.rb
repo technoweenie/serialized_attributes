@@ -127,6 +127,11 @@ module SerializedAttributes
       changed_ivar = "#{data_field}_changed"
       meta_model.send(:attr_accessor, "#{data_field}_schema")
       @model.send("#{data_field}_schema=", self)
+
+      @model.send(:define_method, :attribute_names) do
+        (@attributes.keys + send(data_field).keys - [blob_field]).sort
+      end
+
       @model.send(:define_method, data_field) do
         instance_variable_get("@#{data_field}") || begin
           instance_variable_get("@#{changed_ivar}").clear if send("#{changed_ivar}?")
