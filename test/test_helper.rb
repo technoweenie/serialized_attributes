@@ -51,6 +51,7 @@ class SerializedRecord < ActiveRecord::Base
     float   :average
     time    :birthday
     boolean :active
+    boolean :default_in_my_favor, :default => true
   end
 
   before_save { |r| false } # cancel the save

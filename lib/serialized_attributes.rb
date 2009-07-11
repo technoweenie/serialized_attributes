@@ -153,17 +153,15 @@ module SerializedAttributes
           instance_variable_get("@#{changed_ivar}").clear if send("#{changed_ivar}?")
           decoded = SerializedAttributes::Schema.decode(send(blob_field))
           schema  = self.class.send("#{data_field}_schema")
-          hash    = {}
+          hash    = Hash.new do |(h, key)|
+            type   = schema.fields[key]
+            h[key] = type ? type.default : nil
+          end
           instance_variable_set("@#{data_field}", hash)
           decoded.each do |k, v|
             next unless schema.include?(k)
             type = schema.fields[k]
             hash[k] = type ? type.parse(v) : v
-          end
-          if decoded.blank? && new_record?
-            schema.fields.each do |key, type|
-              hash[key] = type.default if type.default
-            end
           end
           hash
         end

@@ -15,6 +15,16 @@ class SerializedAttributeWithSerializedDataTest < ActiveSupport::TestCase
     @changed.age      = 6
   end
 
+  test "existing model respects defaults from missing key" do
+    assert !@record.data.key?('default_in_my_favor')
+    assert @record.default_in_my_favor?
+    assert_equal true, @record.data['default_in_my_favor']
+    @record.default_in_my_favor = false
+    assert !@record.default_in_my_favor?
+    @record.default_in_my_favor = nil
+    assert @record.default_in_my_favor?
+  end
+
   test "new model respects integer defaults" do
     assert_equal 18, @newbie.age
   end
