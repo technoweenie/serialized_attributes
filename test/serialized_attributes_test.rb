@@ -3,14 +3,14 @@ require File.dirname(__FILE__) + '/test_helper'
 class SerializedAttributeWithSerializedDataTest < ActiveSupport::TestCase
   @@current_time = Time.now.utc.midnight
   @@raw_hash     = {:title => 'abc', :age => 5, :average => 5.1, :birthday => @@current_time.xmlschema, :active => true}
-  @@encoded_hash = SerializedAttributes::Schema.encode(@@raw_hash)
+  SerializedRecord.stubbed_raw_data = SerializedAttributes::Schema.encode(@@raw_hash)
 
   def setup
     @newbie  = SerializedRecordWithDefaults.new
     @record  = SerializedRecord.new
     @changed = SerializedRecord.new
-    @record.raw_data  = @@encoded_hash
-    @changed.raw_data = @@encoded_hash
+    @record.raw_data  = SerializedRecord.stubbed_raw_data
+    @changed.raw_data = SerializedRecord.stubbed_raw_data
     @changed.title    = 'def'
     @changed.age      = 6
   end
@@ -34,6 +34,12 @@ class SerializedAttributeWithSerializedDataTest < ActiveSupport::TestCase
 
   test "new model respects date defaults" do
     assert_equal Time.utc(2009, 1, 1), @newbie.birthday
+  end
+
+  test "reloads serialized data" do
+    @changed.id = 481516
+    assert_equal @record.title, @changed.reload(2342).title
+    assert_equal @record.age,   @changed.age
   end
 
   test "initialized model is not changed" do

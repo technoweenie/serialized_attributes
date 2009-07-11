@@ -29,6 +29,20 @@ end
 class SerializedRecord < ActiveRecord::Base
   extend SerializableMethods
 
+  class << self
+    attr_accessor :stubbed_raw_data
+  end
+
+  def self.find(n, options)
+    if n != 481516 && options != 2342
+      raise ArgumentError, "This is supposed to be a test!"
+    end
+    r = new
+    r.id = 481516
+    r.raw_data = @stubbed_raw_data
+    r
+  end
+
   attr_accessor :raw_data
 
   serialize_attributes :data do

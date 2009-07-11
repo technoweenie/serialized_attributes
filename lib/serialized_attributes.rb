@@ -133,8 +133,19 @@ module SerializedAttributes
       meta_model.send(:attr_accessor, "#{data_field}_schema")
       @model.send("#{data_field}_schema=", self)
 
+      @model.class_eval do
+        def reload(options = nil)
+          reset_serialized_data
+          super
+        end
+      end
+
+      @model.send(:define_method, :reset_serialized_data) do
+        instance_variable_set("@#{data_field}", nil)
+      end
+
       @model.send(:define_method, :attribute_names) do
-        (@attributes.keys + send(data_field).keys - [blob_field]).sort
+        (super + send(data_field).keys - [blob_field]).sort
       end
 
       @model.send(:define_method, data_field) do
