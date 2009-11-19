@@ -80,7 +80,12 @@ class SerializedAttributeWithSerializedDataTest < ActiveSupport::TestCase
   test "reads strings" do
     assert_equal @@raw_hash[:title], @record.title
   end
-  
+
+  test "parses strings with unicode characters" do
+    @record.title = "Encöded ɐ \\u003c \\Upload \\upload" # test unicode char, \u**** code, and legit \U... string
+    assert_equal "Encöded ɐ < \\Upload \\upload", @record.title
+  end
+
   test "clears strings with nil" do
     assert @record.data.key?('title')
     @record.title = nil

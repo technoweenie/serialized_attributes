@@ -58,10 +58,18 @@ module SerializedAttributes
 
   class String < AttributeType
     # converts unicode (\u003c) to the actual character
+    # http://rishida.net/tools/conversion/
     def parse(str)
       return nil if str.nil?
       str = str.to_s
-      str.gsub!(/\\u([0-9a-z]{4})/i) { |s| [$1.to_i(16)].pack("U") }
+      str.gsub!(/\\u([0-9a-fA-F]{4})/) do |s| 
+        int = $1.to_i(16)
+        if int.zero? && s != "0000"
+          s
+        else
+          [int].pack("U")
+        end
+      end
       str
     end
   end
