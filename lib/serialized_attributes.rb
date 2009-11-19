@@ -163,6 +163,11 @@ module SerializedAttributes
             type = schema.fields[k]
             hash[k] = type ? type.parse(v) : v
           end
+          if decoded.blank? && new_record?
+            schema.fields.each do |key, type|
+              hash[key] = type.default if type.default
+            end
+          end
           hash
         end
       end

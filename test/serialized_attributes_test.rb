@@ -216,7 +216,7 @@ class SerializedAttributeTest < ActiveSupport::TestCase
 
   test "defines #data method on the model" do
     assert @record.respond_to?(:data)
-    assert_equal @record.data, {}
+    assert_equal @record.data, {'default_in_my_favor' => true}
   end
 
   attributes = {:string => [:title, :body], :integer => [:age], :float => [:average], :time => [:birthday], :boolean => [:active]}
