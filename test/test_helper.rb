@@ -76,6 +76,8 @@ class SerializedRecordWithDefaults < ActiveRecord::Base
     boolean :active,       :default => true
     array   :names,        :default => %w(a b c)
     hash    :extras,       :default => {:a => 1}
+    array   :list
+    hash    :bag
   end
 
   before_save { |r| false } # cancel the save

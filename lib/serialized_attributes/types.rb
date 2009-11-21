@@ -57,6 +57,7 @@ module SerializedAttributes
 
   class Array < AttributeType
     def initialize(options = {})
+      options[:default] ||= []
       super
       @item_type = type_for(options[:type] || "String")
     end
@@ -72,6 +73,7 @@ module SerializedAttributes
 
   class Hash < AttributeType
     def initialize(options = {})
+      options[:default] ||= {}
       super
       @key_type = String.new
       @types    = (options[:types] || {})
