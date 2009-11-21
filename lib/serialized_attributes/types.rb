@@ -1,8 +1,8 @@
 module SerializedAttributes
   class AttributeType
     attr_reader :default
-    def initialize(default = nil)
-      @default = default
+    def initialize(options = {})
+      @default = options[:default]
     end
     def encode(s) s end
   end
@@ -48,6 +48,17 @@ module SerializedAttributes
       end
     end
     def encode(input) input ? input.utc.xmlschema : nil end
+  end
+
+  class Array < AttributeType
+    def initialize(options = {})
+      super
+      @item_type = SerializedAttributes.const_get((options[:type] || "String").to_s.classify).new
+    end
+
+    def parse(input)
+      input.blank? ? nil : input.map! { |item| @item_type.parse(item) }
+    end
   end
 
   class << self

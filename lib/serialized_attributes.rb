@@ -45,6 +45,7 @@ module SerializedAttributes
   add_type :float,   Float
   add_type :time,    Time
   add_type :boolean, Boolean
+  add_type :array,   Array
 
   module ModelMethods
     def serialize_attributes(field = :data, options = {}, &block)

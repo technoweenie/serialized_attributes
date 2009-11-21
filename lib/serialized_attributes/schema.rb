@@ -112,7 +112,7 @@ module SerializedAttributes
       changed_ivar = "#{data_field}_changed"
       names.each do |name|
         name_str          = name.to_s
-        type              = SerializedAttributes.types[type_name].new(options[:default])
+        type              = SerializedAttributes.types[type_name].new(options)
         @fields[name_str] = type
 
         @model.send(:define_method, name) do
