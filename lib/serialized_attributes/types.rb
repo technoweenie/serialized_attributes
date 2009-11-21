@@ -4,7 +4,12 @@ module SerializedAttributes
     def initialize(options = {})
       @default = options[:default]
     end
+
     def encode(s) s end
+
+    def type_for(key)
+      SerializedAttributes.const_get(key.to_s.classify).new
+    end
   end
 
   class Integer < AttributeType
@@ -53,11 +58,46 @@ module SerializedAttributes
   class Array < AttributeType
     def initialize(options = {})
       super
-      @item_type = SerializedAttributes.const_get((options[:type] || "String").to_s.classify).new
+      @item_type = type_for(options[:type] || "String")
     end
 
     def parse(input)
       input.blank? ? nil : input.map! { |item| @item_type.parse(item) }
+    end
+
+    def encode(input)
+      input.blank? ? nil : input.map! { |item| @item_type.encode(item) }
+    end
+  end
+
+  class Hash < AttributeType
+    def initialize(options = {})
+      super
+      @key_type = String.new
+      @types    = (options[:types] || {})
+      @types.keys.each do |key|
+        value = @types.delete(key)
+        @types[key.to_s] = type_for(value)
+      end
+    end
+
+    def parse(input)
+      return nil if input.blank?
+      input.keys.each do |key|
+        value = input.delete(key)
+        key_s = @key_type.parse(key)
+        type  = @types[key_s] || @key_type
+        input[key_s] = type.parse(value)
+      end
+      input
+    end
+
+    def encode(input)
+      return nil if input.blank?
+      input.each do |key, value|
+        type = @types[key] || @key_type
+        input[key] = type.encode(value)
+      end
     end
   end
 

@@ -54,6 +54,10 @@ class SerializedRecord < ActiveRecord::Base
     boolean :default_in_my_favor, :default => true
     array   :names
     array   :lottery_picks, :type => :integer
+    hash    :extras, :types => {
+        :num        => :integer,
+        :started_at => :time
+      }
   end
 
   before_save { |r| false } # cancel the save
@@ -71,6 +75,7 @@ class SerializedRecordWithDefaults < ActiveRecord::Base
     time    :birthday,     :default => Time.utc(2009, 1, 1)
     boolean :active,       :default => true
     array   :names,        :default => %w(a b c)
+    hash    :extras,       :default => {:a => 1}
   end
 
   before_save { |r| false } # cancel the save

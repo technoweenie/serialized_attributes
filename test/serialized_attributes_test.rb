@@ -8,7 +8,7 @@ formatters.each do |fmt|
     end
     self.format       = fmt
     self.current_time = Time.now.utc.midnight
-    self.raw_hash     = {:title => 'abc', :age => 5, :average => 5.1, :birthday => current_time.xmlschema, :active => true, :names => %w(d e f), :lottery_picks => [1, 8, 7]}
+    self.raw_hash     = {:title => 'abc', :age => 5, :average => 5.1, :birthday => current_time.xmlschema, :active => true, :names => %w(d e f), :lottery_picks => [1, 8, 7], :extras => {'b' => 'two'}}
     self.raw_data     = format.encode(raw_hash)
 
     def setup
@@ -34,6 +34,10 @@ formatters.each do |fmt|
 
     test "new model respects array defaults" do
       assert_equal %w(a b c), @newbie.names
+    end
+
+    test "new model respects hash defaults" do
+      assert_equal({:a => 1}, @newbie.extras)
     end
 
     test "new model respects integer defaults" do
@@ -69,9 +73,9 @@ formatters.each do |fmt|
     end
 
     test "#attribute_names contains serialized fields" do
-      assert_equal %w(active age average birthday lottery_picks names title), @record.attribute_names
+      assert_equal %w(active age average birthday extras lottery_picks names title), @record.attribute_names
       @record.body = 'a'
-      assert_equal %w(active age average birthday body lottery_picks names title), @record.attribute_names
+      assert_equal %w(active age average birthday body extras lottery_picks names title), @record.attribute_names
     end
 
     test "initialization does not call writers" do
@@ -115,6 +119,22 @@ formatters.each do |fmt|
       assert @record.data.key?('names')
       @record.names = nil
       assert !@record.data.key?('names')
+    end
+
+    test "reads hashes" do
+      assert_equal self.class.raw_hash[:extras].stringify_keys, @record.extras
+    end
+
+    test "reads hashes with custom types" do
+      now = Time.utc(Time.now.year, 1, 1)
+      @record.raw_data = self.class.format.encode('extras' => {:num => "7", :foo => :bar, :started_at => now})
+      assert_equal({'num' => 7, 'started_at' => now, 'foo' => 'bar'}, @record.extras)
+    end
+
+    test "clears hashes with nil" do
+      assert @record.data.key?('extras')
+      @record.extras = nil
+      assert !@record.data.key?('extras')
     end
 
     test "reads integers" do
@@ -255,7 +275,7 @@ formatters.each do |fmt|
       assert_equal @record.data, {'default_in_my_favor' => true}
     end
 
-    attributes = {:string => [:title, :body], :integer => [:age], :float => [:average], :time => [:birthday], :boolean => [:active], :array => [:names, :lottery_picks]}
+    attributes = {:string => [:title, :body], :integer => [:age], :float => [:average], :time => [:birthday], :boolean => [:active], :array => [:names, :lottery_picks], :hash => [:extras]}
     attributes.values.flatten.each do |attr|
       test "defines ##{attr} method on the model" do
         assert @record.respond_to?(attr)

@@ -56,7 +56,7 @@ module SerializedAttributes
           instance_variable_get("@#{changed_ivar}").clear if send("#{changed_ivar}?")
           schema   = self.class.send("#{data_field}_schema")
           decoded  = schema.formatter.decode(send(blob_field))
-          hash     = Hash.new do |(h, key)|
+          hash     = ::Hash.new do |(h, key)|
             type   = schema.fields[key]
             h[key] = type ? type.default : nil
           end
