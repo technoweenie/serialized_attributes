@@ -1,6 +1,11 @@
 require File.dirname(__FILE__) + '/test_helper'
 
 formatters = [SerializedAttributes::Format::ActiveSupportJson]
+begin
+  gem 'bert'
+  formatters << SerializedAttributes::Format::Bert
+rescue Gem::LoadError
+end
 formatters.each do |fmt|
   Object.const_set("SerializedAttributeWithSerializedDataTestWith#{fmt.name.demodulize}", Class.new(ActiveSupport::TestCase)).class_eval do
     class << self

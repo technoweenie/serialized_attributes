@@ -36,6 +36,7 @@ module SerializedAttributes
 
   module Format
     autoload :ActiveSupportJson, 'serialized_attributes/format/active_support_json'
+    autoload :Bert,              'serialized_attributes/format/bert'
   end
 
   autoload :Schema, 'serialized_attributes/schema'
