@@ -36,6 +36,14 @@ formatters.each do |fmt|
       assert_equal %w(a b c), @newbie.names
     end
 
+    test "new model forces hash defaults" do
+      assert_equal({}, @newbie.bag)
+    end
+
+    test "new model forces array defaults" do
+      assert_equal [], @newbie.list
+    end
+
     test "new model respects hash defaults" do
       assert_equal({:a => 1}, @newbie.extras)
     end
@@ -272,14 +280,22 @@ formatters.each do |fmt|
 
     test "defines #data method on the model" do
       assert @record.respond_to?(:data)
-      assert_equal @record.data, {'default_in_my_favor' => true}
+      assert_equal @record.data, {'default_in_my_favor' => true, "lottery_picks" => [], "extras" => {}, "names" => []}
     end
 
     attributes = {:string => [:title, :body], :integer => [:age], :float => [:average], :time => [:birthday], :boolean => [:active], :array => [:names, :lottery_picks], :hash => [:extras]}
+    arrays_and_hashes = attributes[:array] + attributes[:hash]
     attributes.values.flatten.each do |attr|
-      test "defines ##{attr} method on the model" do
-        assert @record.respond_to?(attr)
-        assert_nil @record.send(attr)
+      if arrays_and_hashes.include?(attr)
+        test "defines ##{attr} method on the model" do
+          assert @record.respond_to?(attr)
+          assert @record.send(attr).blank?
+        end
+      else
+        test "defines ##{attr} method on the model" do
+          assert @record.respond_to?(attr)
+          assert_nil @record.send(attr)
+        end
       end
 
       next if attr == :active
