@@ -47,8 +47,8 @@ module SerializedAttributes
     def parse(input)
       return nil if input.blank?
       case input
-        when Time   then input
-        when String then ::Time.parse(input)
+        when ::Time   then input
+        when ::String then ::Time.parse(input)
         else input.to_time
       end
     end
