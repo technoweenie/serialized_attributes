@@ -22,6 +22,20 @@ formatters.each do |fmt|
       @changed.age      = 6
     end
 
+    test "schema lists attribute names" do
+      %w(title body age average birthday active default_in_my_favor names
+         lottery_picks extras).each do |attr|
+        assert SerializedRecord.data_schema.attribute_names.include?(attr),
+          "#{attr} attribute not found"
+        assert SerializedRecord.all_column_names.include?(attr),
+          "#{attr} attribute not found"
+      end
+      assert !SerializedRecord.data_schema.attribute_names.include?('raw_data'),
+        "raw_data attribute found"
+      assert SerializedRecord.all_column_names.include?('raw_data'),
+        "raw_data attribute not found"
+    end
+
     test "existing model respects defaults from missing key" do
       assert !@record.data.key?('default_in_my_favor')
       assert @record.default_in_my_favor?

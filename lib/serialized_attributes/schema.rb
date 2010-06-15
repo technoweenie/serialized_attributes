@@ -10,6 +10,10 @@ module SerializedAttributes
     attr_accessor :formatter
     attr_reader :model, :field, :fields
 
+    def all_column_names
+      fields ? fields.keys : []
+    end
+
     def encode(body)
       body = body.dup
       body.each do |key, value|
@@ -41,6 +45,10 @@ module SerializedAttributes
           reset_serialized_data
           super
         end
+      end
+
+      meta_model.send(:define_method, :attribute_names) do
+        column_names + send("#{data_field}_schema").attribute_names
       end
 
       @model.send(:define_method, :reset_serialized_data) do
