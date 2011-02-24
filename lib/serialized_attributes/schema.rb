@@ -46,9 +46,8 @@ module SerializedAttributes
           super
         end
       end
-
       meta_model.send(:define_method, :attribute_names) do
-        column_names + send("#{data_field}_schema").attribute_names
+        column_names + send("#{data_field}_schema").all_column_names
       end
 
       @model.send(:define_method, :reset_serialized_data) do
