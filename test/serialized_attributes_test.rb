@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require File.dirname(__FILE__) + '/test_helper'
 
 formatters = [SerializedAttributes::Format::ActiveSupportJson]
@@ -157,108 +158,108 @@ formatters.each do |fmt|
       @record.age = '5.5'
       assert_equal 5, @record.age
     end
-  
+
     test "clears integers with nil" do
       assert @record.data.key?('age')
       @record.age = nil
       assert !@record.data.key?('age')
     end
-  
+
     test "clears integers with blank" do
       assert @record.data.key?('age')
       @record.age = ''
       assert !@record.data.key?('age')
     end
-  
+
     test "reads floats" do
       assert_equal self.class.raw_hash[:average], @record.average
     end
-  
+
     test "parses floats from strings" do
       @record.average = '5.5'
       assert_equal 5.5, @record.average
     end
-  
+
     test "clears floats with nil" do
       assert @record.data.key?('average')
       @record.average = nil
       assert !@record.data.key?('average')
     end
-  
+
     test "clears floats with blank" do
       assert @record.data.key?('average')
       @record.average = ''
       assert !@record.data.key?('average')
     end
-  
+
     test "reads times" do
       assert_equal self.class.current_time, @record.birthday
     end
-  
+
     test "parses times from strings" do
       t = 5.years.ago.utc.midnight
       @record.birthday = t.xmlschema
       assert_equal t, @record.birthday
     end
-  
+
     test "clears times with nil" do
       assert @record.data.key?('birthday')
       @record.birthday = nil
       assert !@record.data.key?('birthday')
     end
-  
+
     test "clears times with blank" do
       assert @record.data.key?('birthday')
       @record.birthday = ''
       assert !@record.data.key?('birthday')
     end
-  
+
     test "reads booleans" do
       assert_equal true, @record.active
     end
-  
+
     test "parses booleans from strings" do
       @record.active = '1'
       assert_equal true, @record.active
       @record.active = '0'
       assert_equal false, @record.active
     end
-  
+
     test "parses booleans from integers" do
       @record.active = 1
       assert_equal true, @record.active
       @record.active = 0
       assert_equal false, @record.active
     end
-  
+
     test "converts booleans to false with nil" do
       assert @record.data.key?('active')
       @record.active = nil
       assert !@record.data.key?('active')
     end
-  
+
      test "attempts to re-encode data when saving" do
        assert_not_nil @record.title
        @record.raw_data = nil
        assert_equal false, @record.save # extra before_save cancels the operation
        assert_equal self.class.raw_hash.merge(:active => 1).stringify_keys, self.class.format.decode(@record.raw_data)
      end
-  
+
     test "knows untouched record is not changed" do
       assert !@record.data_changed?
       assert_equal [], @record.data_changed
     end
-  
+
     test "knows updated record is changed" do
       assert @changed.data_changed?
       assert_equal %w(age title), @changed.data_changed.sort
     end
-  
+
     test "tracks if field has changed" do
       assert !@record.title_changed?
       assert  @changed.title_changed?
     end
-  
+
     test "tracks field changes" do
       assert_nil @record.title_change
       assert_equal %w(abc def), @changed.title_change
@@ -303,7 +304,7 @@ formatters.each do |fmt|
 
     test "defines #active_before_type_cast method on the model" do
       assert @record.respond_to?(:active_before_type_cast)
-      assert_equal "0", @record.active_before_type_cast
+      assert_equal "", @record.active_before_type_cast
     end
 
     attributes[:string].each do |attr|
