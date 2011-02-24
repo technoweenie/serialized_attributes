@@ -306,7 +306,7 @@ formatters.each do |fmt|
 
     test "defines #active_before_type_cast method on the model" do
       assert @record.respond_to?(:active_before_type_cast)
-      assert_equal "0", @record.active_before_type_cast
+      assert_equal "", @record.active_before_type_cast
     end
 
     attributes[:string].each do |attr|

@@ -22,7 +22,10 @@ module SerializedAttributes
 
   class Boolean < AttributeType
     def parse(input)  input && input.respond_to?(:to_i) ? (input.to_i > 0) : input end
-    def encode(input) input ? 1 : 0  end
+    def encode(input)
+      return nil if input.nil?
+      input ? 1 : 0
+    end
   end
 
   class String < AttributeType
