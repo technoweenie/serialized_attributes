@@ -1,9 +1,9 @@
 module SerializedAttributes
   class Schema
     class << self
-      attr_writer :default_schema
-      def default_schema
-        @default_schema ||= SerializedAttributes::Format::ActiveSupportJson
+      attr_writer :default_formatter
+      def default_formatter
+        @default_formatter ||= SerializedAttributes::Format::ActiveSupportJson
       end
     end
 
@@ -28,10 +28,21 @@ module SerializedAttributes
       @fields.include?(key.to_s)
     end
 
+    # Initializes a new Schema.  See `ModelMethods#serialize_attributes`.
+    #
+    # model   - The ActiveRecord class.
+    # field   - The String name of the ActiveRecord attribute that holds
+    #           data.
+    # options - Optional Hash:
+    #           :blob      - The String name of the actual DB field.  Defaults to
+    #                        "raw_#{field}"
+    #           :formatter - The module that handles encoding and decoding the
+    #                        data.  The default is set in
+    #                        `Schema#default_formatter`.
     def initialize(model, field, options)
       @model, @field, @fields = model, field, {}
       @blob_field = options.delete(:blob) || "raw_#{@field}"
-      @formatter  = options.delete(:formatter) || self.class.default_schema
+      @formatter  = options.delete(:formatter) || self.class.default_formatter
       blob_field  = @blob_field
       data_field  = @field
 
@@ -113,13 +124,22 @@ module SerializedAttributes
       end
     end
 
+    # Adds the accessors for a serialized field on this model.  Also sets up
+    # the encoders and decoders.
+    #
+    # type_name - The Symbol matching a valid type.
+    # *names    - One or more Symbol field names.
+    # options   - Optional Hash to be sent to the initialized Type.
+    #             :default - Sets the default value.
+    #
+    # Returns nothing.
     def field(type_name, *names)
       options      = names.extract_options!
       data_field   = @field
       changed_ivar = "#{data_field}_changed"
+      type         = SerializedAttributes.types[type_name].new(options)
       names.each do |name|
-        name_str          = name.to_s
-        type              = SerializedAttributes.types[type_name].new(options)
+        name_str = name.to_s
         @fields[name_str] = type
 
         @model.send(:define_method, name) do
