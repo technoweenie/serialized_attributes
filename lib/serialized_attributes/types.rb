@@ -65,11 +65,23 @@ module SerializedAttributes
     end
 
     def parse(input)
-      input.blank? ? nil : input.map! { |item| @item_type.parse(item) }
+      if input.nil?
+        nil
+      elsif input.blank?
+        []
+      else
+        input.map! { |item| @item_type.parse(item) }
+      end
     end
 
     def encode(input)
-      input.blank? ? nil : input.map! { |item| @item_type.encode(item) }
+      if input.nil?
+        nil
+      elsif input.blank?
+        []
+      else
+        input.map! { |item| @item_type.encode(item) }
+      end
     end
   end
 
