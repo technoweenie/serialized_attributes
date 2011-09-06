@@ -1,6 +1,5 @@
 module SerializedAttributes
   class AttributeType
-    attr_reader :default
     def initialize(options = {})
       @default = options[:default]
     end
@@ -10,17 +9,24 @@ module SerializedAttributes
     def type_for(key)
       SerializedAttributes.const_get(key.to_s.classify).new
     end
+
+    def default
+      @default && @default.respond_to?(:dup) ? @default.dup : @default
+    end
   end
 
   class Integer < AttributeType
+    attr_reader :default
     def parse(input)  input.blank? ? nil : input.to_i end
   end
 
   class Float < AttributeType
+    attr_reader :default
     def parse(input)  input.blank? ? nil : input.to_f end
   end
 
   class Boolean < AttributeType
+    attr_reader :default
     def parse(input)  input && input.respond_to?(:to_i) ? (input.to_i > 0) : input end
     def encode(input)
       return nil if input.nil?
