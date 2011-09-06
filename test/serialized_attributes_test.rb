@@ -102,7 +102,7 @@ formatters.each do |fmt|
       @record.raw_data = self.class.format.encode(self.class.raw_hash.merge(:foo => :bar))
       assert_not_nil @record.title     # no undefined foo= error
       assert_equal false, @record.save # extra before_save cancels the operation
-      assert_equal self.class.raw_hash.merge(:active => 1).stringify_keys, self.class.format.decode(@record.raw_data)
+      assert_equal self.class.raw_hash.merge(:active => 1).stringify_keys.keys.sort, self.class.format.decode(@record.raw_data).keys.sort
     end
 
     test "reads strings" do
@@ -242,7 +242,10 @@ formatters.each do |fmt|
        assert_not_nil @record.title
        @record.raw_data = nil
        assert_equal false, @record.save # extra before_save cancels the operation
-       assert_equal self.class.raw_hash.merge(:active => 1).stringify_keys, self.class.format.decode(@record.raw_data)
+       expected = self.class.raw_hash.merge \
+         :active   => true,
+         :birthday => Time.parse(self.class.raw_hash[:birthday])
+       assert_equal expected.stringify_keys, @record.class.data_schema.decode(@record.raw_data)
      end
 
     test "knows untouched record is not changed" do

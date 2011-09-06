@@ -24,6 +24,25 @@ module SerializedAttributes
       formatter.encode(body)
     end
 
+    def decode(data, is_new_record = false)
+      decoded  = formatter.decode(data)
+      hash     = ::Hash.new do |(h, key)|
+        type   = fields[key]
+        h[key] = type ? type.default : nil
+      end
+      decoded.each do |k, v|
+        next unless include?(k)
+        type = fields[k]
+        hash[k] = type ? type.parse(v) : v
+      end
+      if decoded.blank? && is_new_record
+        fields.each do |key, type|
+          hash[key] = type.default if type.default
+        end
+      end
+      hash
+    end
+
     def include?(key)
       @fields.include?(key.to_s)
     end
@@ -73,22 +92,8 @@ module SerializedAttributes
         instance_variable_get("@#{data_field}") || begin
           instance_variable_get("@#{changed_ivar}").clear if send("#{changed_ivar}?")
           schema   = self.class.send("#{data_field}_schema")
-          decoded  = schema.formatter.decode(send(blob_field))
-          hash     = ::Hash.new do |(h, key)|
-            type   = schema.fields[key]
-            h[key] = type ? type.default : nil
-          end
+          hash     = schema.decode(send(blob_field), new_record?)
           instance_variable_set("@#{data_field}", hash)
-          decoded.each do |k, v|
-            next unless schema.include?(k)
-            type = schema.fields[k]
-            hash[k] = type ? type.parse(v) : v
-          end
-          if decoded.blank? && new_record?
-            schema.fields.each do |key, type|
-              hash[key] = type.default if type.default
-            end
-          end
           hash
         end
       end
