@@ -11,7 +11,7 @@ module SerializedAttributes
     end
 
     def default
-      @default && @default.respond_to?(:dup) ? @default.dup : @default
+      @default && @default.duplicable? ? @default.dup : @default
     end
   end
 
