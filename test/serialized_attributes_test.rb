@@ -238,6 +238,11 @@ formatters.each do |fmt|
       assert !@record.data.key?('active')
     end
 
+    test "ignores empty strings for booleans" do
+      @newbie.clearance = ""
+      assert_nil @newbie.clearance
+    end
+
      test "attempts to re-encode data when saving" do
        assert_not_nil @record.title
        @record.raw_data = nil
