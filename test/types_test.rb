@@ -9,4 +9,10 @@ class SerializedAttributesTypesTest < ActiveSupport::TestCase
     assert_equal nil, type.encode(nil)
   end
 
+  test "boolean type encodes blank string properly" do
+    type = SerializedAttributes::Boolean.new
+
+    assert_equal nil, type.encode("")
+  end
+
 end
