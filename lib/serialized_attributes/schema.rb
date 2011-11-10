@@ -85,7 +85,7 @@ module SerializedAttributes
       end
 
       @model.send(:define_method, :attribute_names) do
-        (super + send(data_field).keys - [blob_field]).map! { |s| s.to_s }.sort!
+        (super() + send(data_field).keys - [blob_field]).map! { |s| s.to_s }.sort!
       end
 
       @model.send(:define_method, data_field) do
