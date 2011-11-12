@@ -27,7 +27,11 @@ module SerializedAttributes
 
   class Boolean < AttributeType
     attr_reader :default
-    def parse(input)  input && input.respond_to?(:to_i) ? (input.to_i > 0) : input end
+    def parse(input)
+      return nil if input == ""
+      input && input.respond_to?(:to_i) ? (input.to_i > 0) : input
+    end
+
     def encode(input)
       return nil if input.nil? || input == ""
       return 1 if input == 'true'

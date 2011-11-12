@@ -29,4 +29,14 @@ class SerializedAttributesTypesTest < ActiveSupport::TestCase
     assert_equal 1, type.encode(true)
   end
 
+  test "boolean type parses properly" do
+    type = SerializedAttributes::Boolean.new
+
+    assert_equal false, type.parse(0)
+    assert_equal true, type.parse(1)
+    assert_equal false, type.parse("0")
+    assert_equal true, type.parse("1")
+    assert_equal nil, type.parse("")
+  end
+
 end
