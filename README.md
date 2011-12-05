@@ -13,9 +13,12 @@ Some of the code and most of the ideas are taken from [Heresy][Heresy], a ruby
 implementation of [how FriendFeed uses MySQL for schema-free storage][schemafree].
 
 Supports ActiveRecord 2.2 in ruby 1.8.7, and ActiveRecord 2.3-3.1 in ruby 1.9.3.
+See [Travis CI][travis] to see if we support your version of
+ActiveRecord and ruby.
 
 [Heresy]: https://github.com/kabuki/heresy
 [schemafree]: http://bret.appspot.com/entry/how-friendfeed-uses-mysql
+[travis]: http://travis-ci.org/#!/technoweenie/serialized_attributes
 
 ## Setup
 
