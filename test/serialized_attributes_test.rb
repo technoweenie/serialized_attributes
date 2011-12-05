@@ -218,10 +218,17 @@ formatters.each do |fmt|
       assert_equal true, @record.active
     end
 
-    test "parses booleans from strings" do
+    test "parses booleans from integer like strings" do
       @record.active = '1'
       assert_equal true, @record.active
       @record.active = '0'
+      assert_equal false, @record.active
+    end
+
+    test "parses booleans from boolean like strings" do
+      @record.active = 'true'
+      assert_equal true, @record.active
+      @record.active = 'false'
       assert_equal false, @record.active
     end
 

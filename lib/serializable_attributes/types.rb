@@ -29,6 +29,9 @@ module SerializableAttributes
     attr_reader :default
     def parse(input)
       return nil if input == ""
+      return true if input == 'true'
+      return false if input == 'false'
+
       input && input.respond_to?(:to_i) ? (input.to_i > 0) : input
     end
 
