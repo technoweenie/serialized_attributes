@@ -22,7 +22,11 @@ ActiveRecord and ruby.
 
 ## Setup
 
-Install the plugin into your Rails app.
+    gem install serializable_attributes
+
+Sorry for the confusion, but someone took the `serialized_attributes`
+gem name.  I wouldn't mind giving it a completely new name before a
+"1.0" release though.
 
 ## Usage
 

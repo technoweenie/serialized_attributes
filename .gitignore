@@ -3,3 +3,4 @@ vendor
 bin
 Gemfile.lock
 gemfiles/*.lock
+pkg
