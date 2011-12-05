@@ -33,10 +33,8 @@ module SerializedAttributes
     end
 
     def encode(input)
-      return nil if input.nil? || input == ""
-      return 1 if input == 'true'
+      return nil if input.to_s.empty?
       return 0 if input == 'false'
-
       input ? 1 : 0
     end
   end
@@ -47,7 +45,7 @@ module SerializedAttributes
     def parse(str)
       return nil if str.nil?
       str = str.to_s
-      str.gsub!(/\\u([0-9a-fA-F]{4})/) do |s|
+      str = str.gsub(/\\u([0-9a-fA-F]{4})/) do |s|
         int = $1.to_i(16)
         if int.zero? && s != "0000"
           s
