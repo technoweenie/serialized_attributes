@@ -17,8 +17,17 @@ rescue LoadError
 end
 
 module SerializableMethods
-  def table_exists?() false end
-  def columns()       []    end
+  def table_exists?
+    false
+  end
+
+  def columns
+    []
+  end
+
+  def column_defaults
+    {}
+  end
 
   def transaction
     yield
