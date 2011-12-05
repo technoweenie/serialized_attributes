@@ -32,17 +32,16 @@
 #   end
 #
 module SerializedAttributes
-  require 'serialized_attributes/types'
+  require File.expand_path('../serialized_attributes/types', __FILE__)
+  require File.expand_path('../serialized_attributes/schema', __FILE__)
 
   if nil.respond_to?(:duplicable?)
-    require 'serialized_attributes/duplicable'
+    require File.expand_path('../serialized_attributes/duplicable', __FILE__)
   end
 
   module Format
-    autoload :ActiveSupportJson, 'serialized_attributes/format/active_support_json'
+    autoload :ActiveSupportJson, File.expand_path('../serialized_attributes/format/active_support_json', __FILE__)
   end
-
-  autoload :Schema, 'serialized_attributes/schema'
 
   add_type :string,  String
   add_type :integer, Integer
