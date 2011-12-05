@@ -12,9 +12,9 @@ Gem::Specification.new do |s|
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
   s.name              = 'serializable_attributes'
-  s.version           = '0.7.5'
-  s.date              = '2011-10-04'
-  s.rubyforge_project = 'faraday'
+  s.version           = '0.9.0'
+  s.date              = '2011-12-05'
+  s.rubyforge_project = 'serializable_attributes'
 
   ## Make sure your summary is short. The description may be as long
   ## as you like.
@@ -39,45 +39,25 @@ Gem::Specification.new do |s|
   ## THE MANIFEST COMMENTS, they are used as delimiters by the task.
   # = MANIFEST =
   s.files = %w[
-    Gemfile
-    LICENSE.md
+    LICENSE
     README.md
     Rakefile
-    config.ru
-    faraday.gemspec
-    lib/faraday.rb
-    lib/faraday/adapter.rb
-    lib/faraday/adapter/action_dispatch.rb
-    lib/faraday/adapter/em_synchrony.rb
-    lib/faraday/adapter/excon.rb
-    lib/faraday/adapter/net_http.rb
-    lib/faraday/adapter/patron.rb
-    lib/faraday/adapter/test.rb
-    lib/faraday/adapter/typhoeus.rb
-    lib/faraday/builder.rb
-    lib/faraday/connection.rb
-    lib/faraday/error.rb
-    lib/faraday/middleware.rb
-    lib/faraday/request.rb
-    lib/faraday/request/json.rb
-    lib/faraday/request/multipart.rb
-    lib/faraday/request/url_encoded.rb
-    lib/faraday/response.rb
-    lib/faraday/response/logger.rb
-    lib/faraday/response/raise_error.rb
-    lib/faraday/upload_io.rb
-    lib/faraday/utils.rb
-    test/adapters/live_test.rb
-    test/adapters/logger_test.rb
-    test/adapters/net_http_test.rb
-    test/adapters/test_middleware_test.rb
-    test/connection_test.rb
-    test/env_test.rb
-    test/helper.rb
-    test/live_server.rb
-    test/middleware_stack_test.rb
-    test/request_middleware_test.rb
-    test/response_middleware_test.rb
+    gemfiles/ar-2.2.gemfile
+    gemfiles/ar-2.3.gemfile
+    gemfiles/ar-3.0.gemfile
+    gemfiles/ar-3.1.gemfile
+    init.rb
+    lib/serializable_attributes.rb
+    lib/serializable_attributes/duplicable.rb
+    lib/serializable_attributes/format/active_support_json.rb
+    lib/serializable_attributes/schema.rb
+    lib/serializable_attributes/types.rb
+    rails_init.rb
+    script/setup
+    serializable_attributes.gemspec
+    test/serialized_attributes_test.rb
+    test/test_helper.rb
+    test/types_test.rb
   ]
   # = MANIFEST =
 
