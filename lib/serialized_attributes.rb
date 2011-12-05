@@ -34,6 +34,10 @@
 module SerializedAttributes
   require 'serialized_attributes/types'
 
+  if defined?(Rails) && Rails::VERSION::MAJOR <= 2 && Rails::VERSION::MINOR <= 2
+    require 'serialized_attributes/duplicable'
+  end
+
   module Format
     autoload :ActiveSupportJson, 'serialized_attributes/format/active_support_json'
   end
