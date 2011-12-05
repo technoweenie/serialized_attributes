@@ -27,14 +27,17 @@ module SerializedAttributes
     def decode(data, is_new_record = false)
       decoded  = formatter.decode(data)
       hash     = ::Hash.new do |(h, key)|
-        type   = fields[key]
-        h[key] = type ? type.default : nil
+        if type = fields[key]
+          h[key] = type ? type.default : nil
+        end
       end
+
       decoded.each do |k, v|
         next unless include?(k)
         type = fields[k]
         hash[k] = type ? type.parse(v) : v
       end
+
       if decoded.blank? && is_new_record
         fields.each do |key, type|
           hash[key] = type.default if type.default
@@ -76,6 +79,7 @@ module SerializedAttributes
           super
         end
       end
+
       meta_model.send(:define_method, :attribute_names) do
         column_names + send("#{data_field}_schema").all_column_names
       end
@@ -85,7 +89,8 @@ module SerializedAttributes
       end
 
       @model.send(:define_method, :attribute_names) do
-        (super() + send(data_field).keys - [blob_field]).map! { |s| s.to_s }.sort!
+        (super() + send(data_field).keys - [blob_field]).
+          map! { |s| s.to_s }.sort!
       end
 
       @model.send(:define_method, data_field) do
