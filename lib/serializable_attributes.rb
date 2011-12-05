@@ -32,7 +32,7 @@
 #
 module SerializableAttributes
   VERSION = "0.9.0"
-  
+
   require File.expand_path('../serializable_attributes/types', __FILE__)
   require File.expand_path('../serializable_attributes/schema', __FILE__)
 
@@ -74,3 +74,6 @@ end
 # Backwards compatible hack.
 Object.const_set :SerializedAttributes, SerializableAttributes
 
+if defined?(::Rails)
+  require File.expand_path('../../rails_init', __FILE__)
+end
