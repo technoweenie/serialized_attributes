@@ -60,7 +60,17 @@ module SerializableAttributes
       schema
     end
   end
+
+  # Install the plugin for the given model class.
+  #
+  # active_record - A class to install the plugin.  Default: ActiveRecord::Base.
+  #
+  # Returns nothing.
+  def self.setup(active_record = ActiveRecord::Base)
+    active_record.extend ModelMethods
+  end
 end
 
+# Backwards compatible hack.
 Object.const_set :SerializedAttributes, SerializableAttributes
 
