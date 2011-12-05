@@ -63,6 +63,12 @@ end
 #
 #############################################################################
 
+begin
+  require 'appraisal'
+  require 'bundler/setup'
+rescue LoadError
+  puts "Appraisal is not available.  Setup this lib with `script/setup`, and run `bin/rake` instead."
+end
 
 
 #############################################################################

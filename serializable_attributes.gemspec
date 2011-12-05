@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   ## Leave these as is they will be modified for you by the rake gemspec task.
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
-  s.name              = 'faraday'
+  s.name              = 'serializable_attributes'
   s.version           = '0.7.5'
   s.date              = '2011-10-04'
   s.rubyforge_project = 'faraday'
