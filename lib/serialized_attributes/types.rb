@@ -44,8 +44,7 @@ module SerializedAttributes
     # http://rishida.net/tools/conversion/
     def parse(str)
       return nil if str.nil?
-      str = str.to_s
-      str = str.gsub(/\\u([0-9a-fA-F]{4})/) do |s|
+      str.to_s.gsub(/\\u([0-9a-fA-F]{4})/) do |s|
         int = $1.to_i(16)
         if int.zero? && s != "0000"
           s
@@ -53,7 +52,6 @@ module SerializedAttributes
           [int].pack("U")
         end
       end
-      str
     end
   end
 
