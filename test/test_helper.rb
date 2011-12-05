@@ -29,6 +29,14 @@ module SerializableMethods
     {}
   end
 
+  def columns_hash
+    {}
+  end
+
+  def primary_key
+    "id"
+  end
+
   def transaction
     yield
   rescue ActiveRecord::Rollback
@@ -70,6 +78,9 @@ class SerializedRecord < ActiveRecord::Base
   end
 
   before_save { |r| false } # cancel the save
+
+  def add_to_transaction
+  end
 end
 
 class SerializedRecordWithDefaults < ActiveRecord::Base
@@ -90,4 +101,7 @@ class SerializedRecordWithDefaults < ActiveRecord::Base
   end
 
   before_save { |r| false } # cancel the save
+
+  def add_to_transaction
+  end
 end
