@@ -16,7 +16,7 @@ module SerializedAttributes
       end
 
       def decode(body)
-        return {} if body.blank?
+        return {} if body.to_s.empty?
         s = StringIO.new(body)
         z = Zlib::GzipReader.new(s)
         hash = ActiveSupport::JSON.decode(z.read)
