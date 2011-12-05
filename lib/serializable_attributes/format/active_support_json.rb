@@ -1,7 +1,7 @@
 require 'zlib'
 require 'stringio'
 
-module SerializedAttributes
+module SerializableAttributes
   module Format
     module ActiveSupportJson
       extend self
@@ -26,3 +26,4 @@ module SerializedAttributes
     end
   end
 end
+

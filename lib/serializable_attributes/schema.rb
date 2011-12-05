@@ -1,9 +1,9 @@
-module SerializedAttributes
+module SerializableAttributes
   class Schema
     class << self
       attr_writer :default_formatter
       def default_formatter
-        @default_formatter ||= SerializedAttributes::Format::ActiveSupportJson
+        @default_formatter ||= SerializableAttributes::Format::ActiveSupportJson
       end
     end
 
@@ -147,7 +147,7 @@ module SerializedAttributes
       options      = names.extract_options!
       data_field   = @field
       changed_ivar = "#{data_field}_changed"
-      type         = SerializedAttributes.types[type_name].new(options)
+      type         = SerializableAttributes.types[type_name].new(options)
       names.each do |name|
         name_str = name.to_s
         @fields[name_str] = type
@@ -185,3 +185,4 @@ module SerializedAttributes
     end
   end
 end
+

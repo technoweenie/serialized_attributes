@@ -1,4 +1,4 @@
-module SerializedAttributes
+module SerializableAttributes
   class AttributeType
     def initialize(options = {})
       @default = options[:default]
@@ -7,7 +7,7 @@ module SerializedAttributes
     def encode(s) s end
 
     def type_for(key)
-      SerializedAttributes.const_get(key.to_s.classify).new
+      SerializableAttributes.const_get(key.to_s.classify).new
     end
 
     def default
@@ -136,3 +136,4 @@ module SerializedAttributes
   end
   self.types = {}
 end
+
