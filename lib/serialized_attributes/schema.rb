@@ -25,8 +25,8 @@ module SerializedAttributes
     end
 
     def decode(data, is_new_record = false)
-      decoded  = formatter.decode(data)
-      hash     = ::Hash.new do |(h, key)|
+      decoded = formatter.decode(data)
+      hash = ::Hash.new do |h, key|
         if type = fields[key]
           h[key] = type ? type.default : nil
         end
