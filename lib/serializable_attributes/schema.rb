@@ -98,7 +98,7 @@ module SerializableAttributes
         if schema.include?(attribute_name)
           data[attribute_name.to_s]
         else
-          super
+          super(attribute_name)
         end
       end
 
