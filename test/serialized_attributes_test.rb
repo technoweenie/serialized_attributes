@@ -91,6 +91,16 @@ formatters.each do |fmt|
       assert_equal %w(active age average birthday body extras lottery_picks names title), @record.attribute_names
     end
 
+    test "#read_attribute reads serialized fields" do
+      @record.body = 'a'
+      assert_equal 'a', @record.read_attribute(:body)
+    end
+
+    test "#attributes contains serialized fields" do
+      @record.body = 'a'
+      assert_equal 'a', @record.attributes['body']
+    end
+
     test "initialization does not call writers" do
       def @record.title=(v)
         raise ArgumentError

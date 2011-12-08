@@ -93,6 +93,15 @@ module SerializableAttributes
           map! { |s| s.to_s }.sort!
       end
 
+      @model.send(:define_method, :read_attribute) do |attribute_name|
+        schema = self.class.send("#{data_field}_schema")
+        if schema.include?(attribute_name)
+          data[attribute_name.to_s]
+        else
+          super
+        end
+      end
+
       @model.send(:define_method, data_field) do
         instance_variable_get("@#{data_field}") || begin
           instance_variable_get("@#{changed_ivar}").clear if send("#{changed_ivar}?")
