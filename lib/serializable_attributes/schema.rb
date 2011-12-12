@@ -104,7 +104,7 @@ module SerializableAttributes
 
       if defined?(ActiveRecord::VERSION) && ActiveRecord::VERSION::STRING >= '3.1'
         @model.send(:define_method, :attributes) do
-          super.merge(send(data_field))
+          super().merge(send(data_field))
         end
       end
 
