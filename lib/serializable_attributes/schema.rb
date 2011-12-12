@@ -102,6 +102,12 @@ module SerializableAttributes
         end
       end
 
+      if ActiveRecord::VERSION::STRING >= '3.1'
+        @model.send(:define_method, :attributes) do
+          super.merge(send(data_field))
+        end
+      end
+
       @model.send(:define_method, data_field) do
         instance_variable_get("@#{data_field}") || begin
           instance_variable_get("@#{changed_ivar}").clear if send("#{changed_ivar}?")
