@@ -12,8 +12,8 @@ Gem::Specification.new do |s|
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
   s.name              = 'serializable_attributes'
-  s.version           = '1.0.0'
-  s.date              = '2011-12-05'
+  s.version           = '0.9.0'
+  s.date              = '2012-05-14'
   s.rubyforge_project = 'serializable_attributes'
 
   ## Make sure your summary is short. The description may be as long
@@ -46,6 +46,7 @@ Gem::Specification.new do |s|
     gemfiles/ar-2.3.gemfile
     gemfiles/ar-3.0.gemfile
     gemfiles/ar-3.1.gemfile
+    gemfiles/ar-3.2.gemfile
     init.rb
     lib/serializable_attributes.rb
     lib/serializable_attributes/duplicable.rb
