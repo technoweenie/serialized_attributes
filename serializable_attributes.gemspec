@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
   s.name              = 'serializable_attributes'
-  s.version           = '0.9.0'
+  s.version           = '1.0.0'
   s.date              = '2011-12-05'
   s.rubyforge_project = 'serializable_attributes'
 
@@ -24,15 +24,15 @@ Gem::Specification.new do |s|
   ## List the primary authors. If there are a bunch of authors, it's probably
   ## better to set the email to an email list or something. If you don't have
   ## a custom homepage, consider using your GitHub URL or the like.
-  s.authors  = ["Rick Olson"]
-  s.email    = 'technoweenie@gmail.com'
+  s.authors  = ["Rick Olson", "Michael Guterl"]
+  s.email    = ['technoweenie@gmail.com', 'michael@diminishing.org']
   s.homepage = 'http://github.com/technoweenie/serialized_attributes'
 
   ## This gets added to the $LOAD_PATH so that 'lib/NAME.rb' can be required as
   ## require 'NAME.rb' or'/lib/NAME/file.rb' can be as require 'NAME/file.rb'
   s.require_paths = %w[lib]
 
-  s.add_dependency "activerecord", [">= 2.2.0", "< 3.2.0"]
+  s.add_dependency "activerecord", [">= 2.2.0", "< 3.3.0"]
 
   ## Leave this section as-is. It will be automatically generated from the
   ## contents of your Git repository via the gemspec task. DO NOT REMOVE
