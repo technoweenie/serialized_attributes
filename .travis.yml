@@ -6,8 +6,8 @@ gemfile:
   - gemfiles/ar-2.3.gemfile
   - gemfiles/ar-3.0.gemfile
   - gemfiles/ar-3.1.gemfile
+  - gemfiles/ar-3.2.gemfile
 matrix:
   exclude:
     - rvm: 1.9.3
       gemfile: gemfiles/ar-2.2.gemfile
-
