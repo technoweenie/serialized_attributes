@@ -1,12 +1,12 @@
 # SerializedAttributes
 
-SerializedAttributes allows you to add an encoded hash to an ActiveRecord model.  
-This is similar to the built-in ActiveRecord serialization, except that the field 
+SerializedAttributes allows you to add an encoded hash to an ActiveRecord model.
+This is similar to the built-in ActiveRecord serialization, except that the field
 is converted to JSON, gzipped, and stored in a BLOB field.  This uses the json
 gem which is much faster than YAML serialization.  However, JSON is not nearly as
 flexible, so you're stuck with strings/integers/dates/etc.
 
-Where possible, ActiveRecord compatible methods are generated so that a migration 
+Where possible, ActiveRecord compatible methods are generated so that a migration
 should be pretty simple.  See unit tests for examples.
 
 Some of the code and most of the ideas are taken from [Heresy][Heresy], a ruby
@@ -57,4 +57,3 @@ class Profile < ActiveRecord::Base
   end
 end
 ```
-
