@@ -82,7 +82,7 @@ module SerializableAttributes
       elsif input.blank?
         []
       else
-        input.map! { |item| @item_type.parse(item) }
+        input.map { |item| @item_type.parse(item) }
       end
     end
 
@@ -139,4 +139,3 @@ module SerializableAttributes
   end
   self.types = {}
 end
-

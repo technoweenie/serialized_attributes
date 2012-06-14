@@ -39,4 +39,13 @@ class SerializedAttributesTypesTest < ActiveSupport::TestCase
     assert_equal nil, type.parse("")
   end
 
+  test "array type does not modify inputs when parsing" do
+    type = SerializedAttributes::Array.new :type => :integer
+    params = { :language_ids => [""] }
+
+    type.parse params[:language_ids]
+
+    assert_equal({ :language_ids => [""] }, params)
+  end
+
 end
