@@ -101,6 +101,15 @@ module SerializableAttributes
           super(attribute_name)
         end
       end
+      
+      @model.send(:define_method, :write_attribute) do |attr_name, value|
+        schema = self.class.send("#{data_field}_schema")
+        if schema.include?(attr_name)
+          self.write_serialized_field(attr_name, value)
+        else
+          super(attr_name, value)
+        end
+      end
 
       if defined?(ActiveRecord::VERSION) && ActiveRecord::VERSION::STRING >= '3.1'
         @model.send(:define_method, :attributes) do
@@ -145,7 +154,7 @@ module SerializableAttributes
       @model.send(:define_method, "#{changed_ivar}?") do
         !send(changed_ivar).empty?
       end
-
+      
       @model.send(:define_method, :dup) do
         duplicate = super
         duplicate.send("#{blob_field}=", self.send(blob_field).dup)
