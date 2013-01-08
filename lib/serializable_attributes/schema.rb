@@ -128,6 +128,7 @@ module SerializableAttributes
         changed_fields = send(changed_ivar)
         instance_variable_get("@#{changed_ivar}")[name_str] = raw_data[name_str] unless changed_fields.include?(name_str)
         parsed_value = type ? type.parse(value) : value
+        self.send(:attribute_will_change!, name_str)
         if parsed_value.nil?
           raw_data.delete(name_str)
         else
