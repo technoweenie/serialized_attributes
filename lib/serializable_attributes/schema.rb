@@ -96,7 +96,7 @@ module SerializableAttributes
       @model.send(:define_method, :read_attribute) do |attribute_name|
         schema = self.class.send("#{data_field}_schema")
         if schema.include?(attribute_name)
-          data[attribute_name.to_s]
+          send(data_field)[attribute_name.to_s]
         else
           super(attribute_name)
         end
