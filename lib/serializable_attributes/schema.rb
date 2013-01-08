@@ -146,6 +146,13 @@ module SerializableAttributes
         !send(changed_ivar).empty?
       end
 
+      @model.send(:define_method, :dup) do
+        duplicate = super
+        duplicate.send("#{blob_field}=", self.send(blob_field).dup)
+        duplicate.reset_serialized_data
+        duplicate
+      end
+
       @model.before_save do |r|
         schema = r.class.send("#{data_field}_schema")
         r.send("#{blob_field}=", schema.encode(r.send(data_field)))
