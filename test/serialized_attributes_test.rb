@@ -297,12 +297,28 @@ formatters.each do |fmt|
       assert_equal %w(abc def), @changed.title_change
     end
     
-    test 'tracks dirty on the model' do
+    test "tracks dirty on the model" do
       assert !@record.changed?
       assert_empty @record.changes
       
       assert @changed.changed?
       assert_equal @changed.changes, {'title' => ['abc', 'def'], 'age' => [5, 6], 'active' => [true, false]}
+    end
+    
+    test "changes a dup without modifying the original" do
+      @duped = @record.dup
+      assert !(@record.raw_data.equal? @duped.raw_data)
+      assert !(@record.data.equal? @duped.data)
+      
+      @duped.title = 'ghi'
+      assert_equal 'ghi', @duped.title
+      assert_equal 'abc', @record.title
+    end
+    
+    test "creates a dup when blob field is nil" do
+      @record = SerializedRecord.new
+      @duped = @record.dup
+      assert_nil @duped.raw_data
     end
   end
 
