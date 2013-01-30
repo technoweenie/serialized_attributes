@@ -21,6 +21,7 @@ formatters.each do |fmt|
       @changed.raw_data = self.class.raw_data
       @changed.title    = 'def'
       @changed.age      = 6
+      @changed[:active] = false
     end
 
     test "schema lists attribute names" do
@@ -94,6 +95,12 @@ formatters.each do |fmt|
     test "#read_attribute reads serialized fields" do
       @record.body = 'a'
       assert_equal 'a', @record.read_attribute(:body)
+    end
+    
+    test "#write_attribute writes serialized fields" do
+      # Note: #[] is an alias for #write_attribute, but #write_attribute is deprecated
+      @record[:body] = 'a'
+      assert_equal 'a', @record.body
     end
 
     test "#attributes contains serialized fields" do
@@ -277,7 +284,7 @@ formatters.each do |fmt|
 
     test "knows updated record is changed" do
       assert @changed.data_changed?
-      assert_equal %w(age title), @changed.data_changed.sort
+      assert_equal %w(active age title), @changed.data_changed.sort
     end
 
     test "tracks if field has changed" do
@@ -295,7 +302,7 @@ formatters.each do |fmt|
       assert_empty @record.changes
       
       assert @changed.changed?
-      assert_equal @changed.changes, {'title' => ['abc', 'def'], 'age' => [5, 6]}
+      assert_equal @changed.changes, {'title' => ['abc', 'def'], 'age' => [5, 6], 'active' => [true, false]}
     end
   end
 
