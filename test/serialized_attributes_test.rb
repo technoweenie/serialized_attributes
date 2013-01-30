@@ -289,6 +289,14 @@ formatters.each do |fmt|
       assert_nil @record.title_change
       assert_equal %w(abc def), @changed.title_change
     end
+    
+    test 'tracks dirty on the model' do
+      assert !@record.changed?
+      assert_empty @record.changes
+      
+      assert @changed.changed?
+      assert_equal @changed.changes, {'title' => ['abc', 'def'], 'age' => [5, 6]}
+    end
   end
 
   Object.const_set("SerializedAttributeTest#{fmt.name.demodulize}", Class.new(ActiveSupport::TestCase)).class_eval do
