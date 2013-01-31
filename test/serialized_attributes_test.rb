@@ -299,7 +299,7 @@ formatters.each do |fmt|
     
     test "tracks dirty on the model" do
       assert !@record.changed?
-      assert_empty @record.changes
+      assert @record.changes.empty?
       
       assert @changed.changed?
       assert_equal @changed.changes, {'title' => ['abc', 'def'], 'age' => [5, 6], 'active' => [true, false]}
