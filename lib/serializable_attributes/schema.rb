@@ -157,7 +157,9 @@ module SerializableAttributes
       
       @model.send(:define_method, :dup) do
         duplicate = super()
-        duplicate.send("#{blob_field}=", self.send(blob_field).try(:dup))
+        if raw_data = self.send(blob_field)
+          duplicate.send("#{blob_field}=", raw_data.dup)
+        end
         duplicate.reset_serialized_data
         duplicate
       end
