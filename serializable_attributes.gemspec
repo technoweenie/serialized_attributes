@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   ## the sub! line in the Rakefile
   s.name              = 'serializable_attributes'
   s.version           = '1.1.0'
-  s.date              = '2012-06-06'
+  s.date              = '2013-08-02'
   s.rubyforge_project = 'serializable_attributes'
 
   ## Make sure your summary is short. The description may be as long
@@ -32,13 +32,14 @@ Gem::Specification.new do |s|
   ## require 'NAME.rb' or'/lib/NAME/file.rb' can be as require 'NAME/file.rb'
   s.require_paths = %w[lib]
 
-  s.add_dependency "activerecord", [">= 2.2.0", "< 3.3.0"]
+  s.add_dependency "activerecord", [">= 2.2.0", "< 4.1.0"]
 
   ## Leave this section as-is. It will be automatically generated from the
   ## contents of your Git repository via the gemspec task. DO NOT REMOVE
   ## THE MANIFEST COMMENTS, they are used as delimiters by the task.
   # = MANIFEST =
   s.files = %w[
+    Gemfile
     LICENSE
     README.md
     Rakefile
@@ -47,6 +48,7 @@ Gem::Specification.new do |s|
     gemfiles/ar-3.0.gemfile
     gemfiles/ar-3.1.gemfile
     gemfiles/ar-3.2.gemfile
+    gemfiles/ar-4.0.gemfile
     init.rb
     lib/serializable_attributes.rb
     lib/serializable_attributes/duplicable.rb
