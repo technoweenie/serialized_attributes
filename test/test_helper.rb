@@ -54,11 +54,7 @@ class SerializedRecord < ActiveRecord::Base
     attr_accessor :stubbed_raw_data
   end
 
-  def self.find(n, options)
-    puts "N: #{n.inspect}, OPTIONS: #{options.inspect}"
-    if n != 481516 && options != 2342
-      raise ArgumentError, "This is supposed to be a test!"
-    end
+  def self.find(options)
     r = new
     r.id = 481516
     r.raw_data = @stubbed_raw_data

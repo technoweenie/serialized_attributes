@@ -76,7 +76,7 @@ formatters.each do |fmt|
 
     test "reloads serialized data" do
       @changed.id = 481516
-      assert_equal @record.title, @changed.reload(2342).title
+      assert_equal @record.title, @changed.reload.title
       assert_equal @record.age,   @changed.age
     end
 
