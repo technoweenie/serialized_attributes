@@ -29,6 +29,10 @@ module SerializableMethods
     {}
   end
 
+  def column_types
+    {}
+  end
+
   def columns_hash
     {}
   end
@@ -51,6 +55,7 @@ class SerializedRecord < ActiveRecord::Base
   end
 
   def self.find(n, options)
+    puts "N: #{n.inspect}, OPTIONS: #{options.inspect}"
     if n != 481516 && options != 2342
       raise ArgumentError, "This is supposed to be a test!"
     end
