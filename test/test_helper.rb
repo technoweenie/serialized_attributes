@@ -54,7 +54,7 @@ class SerializedRecord < ActiveRecord::Base
     attr_accessor :stubbed_raw_data
   end
 
-  def self.find(options)
+  def self.find(*args)
     r = new
     r.id = 481516
     r.raw_data = @stubbed_raw_data
