@@ -89,7 +89,7 @@ module SerializableAttributes
       end
 
       @model.send(:define_method, :attribute_names) do
-        (super() + send(data_field).keys - [blob_field]).
+        (super().reject { |key| key == "id" } + send(data_field).keys - [blob_field]).
           map! { |s| s.to_s }.sort!
       end
 
