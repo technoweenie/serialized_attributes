@@ -54,7 +54,10 @@ class SerializedRecord < ActiveRecord::Base
     attr_accessor :stubbed_raw_data
   end
 
-  def self.find(*args)
+  def self.find(id, *args)
+    if id != 481516
+      raise ArgumentError, "This is supposed to be a test!"
+    end
     r = new
     r.id = 481516
     r.raw_data = @stubbed_raw_data
