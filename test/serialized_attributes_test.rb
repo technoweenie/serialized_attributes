@@ -86,14 +86,14 @@ formatters.each do |fmt|
     end
 
     test "#attribute_names contains serialized fields" do
-      if defined?(ActiveRecord::VERSION) && ActiveRecord::VERSION::STRING < '4.0'
-        assert_equal %w(active age average birthday extras lottery_picks names title), @record.attribute_names
-        @record.body = 'a'
-        assert_equal %w(active age average birthday body extras lottery_picks names title), @record.attribute_names
-      else
+      if defined?(ActiveRecord::VERSION) && ActiveRecord::VERSION::STRING >= '4.0'
         assert_equal %w(active age average birthday extras id lottery_picks names title), @record.attribute_names
         @record.body = 'a'
         assert_equal %w(active age average birthday body extras id lottery_picks names title), @record.attribute_names
+      else
+        assert_equal %w(active age average birthday extras lottery_picks names title), @record.attribute_names
+        @record.body = 'a'
+        assert_equal %w(active age average birthday body extras lottery_picks names title), @record.attribute_names
       end
     end
 
