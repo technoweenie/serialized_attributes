@@ -29,6 +29,10 @@ module SerializableMethods
     {}
   end
 
+  def column_types
+    {}
+  end
+
   def columns_hash
     {}
   end
@@ -50,8 +54,8 @@ class SerializedRecord < ActiveRecord::Base
     attr_accessor :stubbed_raw_data
   end
 
-  def self.find(n, options)
-    if n != 481516 && options != 2342
+  def self.find(id, *args)
+    if id != 481516
       raise ArgumentError, "This is supposed to be a test!"
     end
     r = new
