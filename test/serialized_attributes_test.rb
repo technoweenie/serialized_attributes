@@ -111,6 +111,7 @@ formatters.each do |fmt|
     test "ignores data with extra keys" do
       @record.raw_data = self.class.format.encode(self.class.raw_hash.merge(:foo => :bar))
       assert_not_nil @record.title     # no undefined foo= error
+      @record.title = "changed" # force a change / rewrite
       assert_equal false, @record.save # extra before_save cancels the operation
       assert_equal self.class.raw_hash.merge(:active => 1).stringify_keys.keys.sort, self.class.format.decode(@record.raw_data).keys.sort
     end
