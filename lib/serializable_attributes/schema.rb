@@ -130,7 +130,9 @@ module SerializableAttributes
 
       @model.before_save do |r|
         schema = r.class.send("#{data_field}_schema")
-        r.send("#{blob_field}=", schema.encode(r.send(data_field)))
+        if r.send(blob_field).nil? || !r.send(changed_ivar).empty?
+          r.send("#{blob_field}=", schema.encode(r.send(data_field)))
+        end
       end
     end
 
