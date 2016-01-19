@@ -96,9 +96,18 @@ module SerializableAttributes
       @model.send(:define_method, :read_attribute) do |attribute_name|
         schema = self.class.send("#{data_field}_schema")
         if schema.include?(attribute_name)
-          data[attribute_name.to_s]
+          send(data_field)[attribute_name.to_s]
         else
           super(attribute_name)
+        end
+      end
+      
+      @model.send(:define_method, :write_attribute) do |attr_name, value|
+        schema = self.class.send("#{data_field}_schema")
+        if schema.include?(attr_name)
+          self.write_serialized_field(attr_name, value)
+        else
+          super(attr_name, value)
         end
       end
 
@@ -128,6 +137,7 @@ module SerializableAttributes
         changed_fields = send(changed_ivar)
         instance_variable_get("@#{changed_ivar}")[name_str] = raw_data[name_str] unless changed_fields.include?(name_str)
         parsed_value = type ? type.parse(value) : value
+        self.send(:attribute_will_change!, name_str)
         if parsed_value.nil?
           raw_data.delete(name_str)
         else
@@ -143,6 +153,15 @@ module SerializableAttributes
 
       @model.send(:define_method, "#{changed_ivar}?") do
         !send(changed_ivar).empty?
+      end
+      
+      @model.send(:define_method, :dup) do
+        duplicate = super()
+        raw_data = self.send(blob_field)
+        raw_data &&= raw_data.dup
+        duplicate.send("#{blob_field}=", raw_data)
+        duplicate.reset_serialized_data
+        duplicate
       end
 
       @model.before_save do |r|

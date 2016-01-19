@@ -21,6 +21,7 @@ formatters.each do |fmt|
       @changed.raw_data = self.class.raw_data
       @changed.title    = 'def'
       @changed.age      = 6
+      @changed[:active] = false
     end
 
     test "schema lists attribute names" do
@@ -94,6 +95,12 @@ formatters.each do |fmt|
     test "#read_attribute reads serialized fields" do
       @record.body = 'a'
       assert_equal 'a', @record.read_attribute(:body)
+    end
+    
+    test "#write_attribute writes serialized fields" do
+      # Note: #[] is an alias for #write_attribute, but #write_attribute is deprecated
+      @record[:body] = 'a'
+      assert_equal 'a', @record.body
     end
 
     test "#attributes contains serialized fields" do
@@ -278,7 +285,7 @@ formatters.each do |fmt|
 
     test "knows updated record is changed" do
       assert @changed.data_changed?
-      assert_equal %w(age title), @changed.data_changed.sort
+      assert_equal %w(active age title), @changed.data_changed.sort
     end
 
     test "tracks if field has changed" do
@@ -289,6 +296,30 @@ formatters.each do |fmt|
     test "tracks field changes" do
       assert_nil @record.title_change
       assert_equal %w(abc def), @changed.title_change
+    end
+    
+    test "tracks dirty on the model" do
+      assert !@record.changed?
+      assert @record.changes.empty?
+      
+      assert @changed.changed?
+      assert_equal @changed.changes, {'title' => ['abc', 'def'], 'age' => [5, 6], 'active' => [true, false]}
+    end
+    
+    test "changes a dup without modifying the original" do
+      @duped = @record.dup
+      assert !(@record.raw_data.equal? @duped.raw_data)
+      assert !(@record.data.equal? @duped.data)
+      
+      @duped.title = 'ghi'
+      assert_equal 'ghi', @duped.title
+      assert_equal 'abc', @record.title
+    end
+    
+    test "creates a dup when blob field is nil" do
+      @record = SerializedRecord.new
+      @duped = @record.dup
+      assert_nil @duped.raw_data
     end
   end
 
