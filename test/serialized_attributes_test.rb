@@ -323,6 +323,27 @@ formatters.each do |fmt|
     end
   end
 
+  Object.const_set("SerializedAttributeWithSerializedPrefsDataTestWith#{fmt.name.demodulize}", Class.new(ActiveSupport::TestCase)).class_eval do
+    class << self
+      attr_accessor :format, :current_time, :raw_hash, :raw_prefs
+    end
+    self.format       = fmt
+    self.current_time = Time.now.utc.midnight
+    self.raw_hash     = {:title => 'abc'}
+    self.raw_prefs    = format.encode(raw_hash)
+
+    def setup
+      SerializedPrefsRecord.prefs_schema.formatter = self.class.format
+      @record  = SerializedPrefsRecord.new
+      @record.raw_prefs  = self.class.raw_prefs
+    end
+
+    test "#read_attribute reads serialized fields" do
+      @record.body = 'a'
+      assert_equal 'a', @record.read_attribute(:body)
+    end
+  end
+
   Object.const_set("SerializedAttributeTest#{fmt.name.demodulize}", Class.new(ActiveSupport::TestCase)).class_eval do
     class << self
       attr_accessor :format

@@ -105,3 +105,18 @@ class SerializedRecordWithDefaults < ActiveRecord::Base
   def add_to_transaction
   end
 end
+
+class SerializedPrefsRecord < ActiveRecord::Base
+  extend SerializableMethods
+
+  attr_accessor :raw_prefs
+
+  serialize_attributes :prefs do
+    string  :title, :body
+  end
+
+  before_save { |r| false } # cancel the save
+
+  def add_to_transaction
+  end
+end
